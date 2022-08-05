@@ -1,4 +1,5 @@
 # java-17-certification-practice
+[![java-17-certification-practice](https://github.com/JuanMorenoDeveloper/java-17-certification-practice/actions/workflows/ci.yaml/badge.svg)](https://github.com/JuanMorenoDeveloper/java-17-certification-practice/actions/workflows/ci.yaml)
 
 Sample code to practice for the [1Z0-829 exam](https://education.oracle.com/java-se-17-developer/pexam_1Z0-829)
 
