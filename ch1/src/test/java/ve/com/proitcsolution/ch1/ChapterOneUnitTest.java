@@ -9,10 +9,11 @@ import org.junit.jupiter.api.Test;
 
 class ChapterOneUnitTest {
 
-    static Pattern REGEX_LEADING_WHITESPACE = Pattern.compile("\\s+.*");
-    static Predicate<String> REGEX_TRAILING_WHITESPACE = Pattern.compile(".*\\s+")
+    private static final Predicate<String> REGEX_LEADING_WHITESPACE = Pattern.compile("\\s+.*")
         .asMatchPredicate();
-    static String LINEBREAK_MATCHER = "\\R";
+    private static final Predicate<String> REGEX_TRAILING_WHITESPACE = Pattern.compile(".*\\s+")
+        .asMatchPredicate();
+    private static final String LINEBREAK_MATCHER = "\\R";
 
     @Test
     void verifyTextBlock() {
@@ -20,9 +21,19 @@ class ChapterOneUnitTest {
             squirrel \s
             pigeon \
             termite""";
+        var textBlock2 = """
+            squirrel
+              pigeon
+            termite
+            """;
 
         assertThat(textBlock).hasLineCount(2);
-        assertThat(textBlock.split(LINEBREAK_MATCHER)).anyMatch(REGEX_TRAILING_WHITESPACE);
+        assertThat(textBlock.split(LINEBREAK_MATCHER)).anyMatch(REGEX_TRAILING_WHITESPACE)
+            .noneMatch(REGEX_LEADING_WHITESPACE);
+
+        assertThat(textBlock2).hasLineCount(3);
+        assertThat(textBlock2.split(LINEBREAK_MATCHER)).anyMatch(REGEX_LEADING_WHITESPACE)
+            .noneMatch(REGEX_TRAILING_WHITESPACE);
     }
 
     @Test
@@ -30,6 +41,7 @@ class ChapterOneUnitTest {
         int number1 = Integer.parseInt("15"); // Primitive, all .parse* methods return primitives.
         var number2 = Integer.valueOf("15");
 
+        assertThat(number1).isEqualTo(15);
         assertThat(number2.getClass().isPrimitive()).isFalse();
     }
 }
