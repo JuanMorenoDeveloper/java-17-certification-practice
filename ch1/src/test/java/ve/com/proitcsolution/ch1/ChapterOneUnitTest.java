@@ -27,7 +27,7 @@ class ChapterOneUnitTest {
 
     @Test
     void verifyPrimitive() {
-        int number1 = Integer.parseInt("15"); // Primitive
+        int number1 = Integer.parseInt("15"); // Primitive, all .parse* methods return primitives.
         var number2 = Integer.valueOf("15");
 
         assertThat(number2.getClass().isPrimitive()).isFalse();
