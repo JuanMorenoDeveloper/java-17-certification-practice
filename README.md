@@ -3,6 +3,24 @@
 
 Sample code to practice for the [1Z0-829 exam](https://education.oracle.com/java-se-17-developer/pexam_1Z0-829)
 
+## Modules content (Based on [OCP Oracle Certified Professional Java SE 17 Developer Study Guide by Scott Selikoff, Jeanne Boyarsky](https://www.oreilly.com/library/view/ocp-oracle-certified/9781119864585/))
+
+* Chapter 1: Building Blocks
+* Chapter 2: Operators
+* Chapter 3: Making Decisions
+* Chapter 4: Core APIs
+* Chapter 5: Methods
+* Chapter 6: Class Design
+* Chapter 7: Beyond Classes
+* Chapter 8: Lambdas and Functional Interfaces
+* Chapter 9: Collections and Generics
+* Chapter 10: Streams
+* Chapter 11: Exceptions and Localization
+* Chapter 12: Modules
+* Chapter 13: Concurrency
+* Chapter 14: I/O
+* Chapter 15: JDBC
+
 ## Exam topics
 
 * Handling date, time, text, numeric and boolean values
