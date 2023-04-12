@@ -4,7 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-class ChapterTwoUnitTest {
+class Ch2OperatorsTest {
 
     @Test
     void verifyBitwiseNotOperator() {

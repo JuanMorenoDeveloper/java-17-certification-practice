@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-class ChapterOneUnitTest {
+class Ch1BuildingBlocksTest {
 
     private static final Predicate<String> REGEX_LEADING_WHITESPACE = Pattern.compile("\\s+.*")
         .asMatchPredicate();
