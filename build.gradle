@@ -1,25 +1,23 @@
 plugins {
-	id 'java'
-	id 'eclipse' // optional (to generate Eclipse project files)
-	id 'idea' // optional (to generate IntelliJ IDEA project files)
+    id 'java'
 }
 
-group = 've.com.proitcsolution'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+group 've.com.proitcsolution'
+version '0.0.1-SNAPSHOT'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	testImplementation(platform('org.junit:junit-bom:5.9.0'))
-	testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation(platform('org.junit:junit-bom:5.9.0'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation('org.assertj:assertj-core:3.23.1')
 }
 
 test {
-	useJUnitPlatform()
-	testLogging {
-		events "passed", "skipped", "failed"
-	}
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }

@@ -3,7 +3,7 @@
 
 Sample code to practice for the [1Z0-829 exam](https://education.oracle.com/java-se-17-developer/pexam_1Z0-829)
 
-## Modules content (Based on [OCP Oracle Certified Professional Java SE 17 Developer Study Guide by Scott Selikoff, Jeanne Boyarsky](https://www.oreilly.com/library/view/ocp-oracle-certified/9781119864585/))
+## Unit test content (Based on [OCP Oracle Certified Professional Java SE 17 Developer Study Guide by Scott Selikoff, Jeanne Boyarsky](https://www.oreilly.com/library/view/ocp-oracle-certified/9781119864585/))
 
 * Chapter 1: Building Blocks
 * Chapter 2: Operators

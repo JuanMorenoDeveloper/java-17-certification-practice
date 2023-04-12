@@ -1,4 +1,4 @@
-package ve.com.proitcsolution.ch1;
+package ve.com.proitcsolution;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
