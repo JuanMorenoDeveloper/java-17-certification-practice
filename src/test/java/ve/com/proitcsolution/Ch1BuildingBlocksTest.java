@@ -4,7 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-
 import org.junit.jupiter.api.Test;
 
 class Ch1BuildingBlocksTest {
