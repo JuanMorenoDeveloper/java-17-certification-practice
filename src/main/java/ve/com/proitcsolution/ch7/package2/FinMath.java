@@ -1,4 +1,4 @@
-package ve.com.proitcsolution.ch7.p2;
+package ve.com.proitcsolution.ch7.package2;
 
 import ve.com.proitcsolution.ch7.sealed.InterestCalculator;
 

@@ -1,4 +1,4 @@
-package ve.com.proitcsolution.ch7.p3;
+package ve.com.proitcsolution.ch7.package1;
 
 abstract non-sealed interface Value extends Cacheable{ }
 sealed abstract class Result implements Cacheable permits IntResult{ }
