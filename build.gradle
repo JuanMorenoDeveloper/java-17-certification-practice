@@ -15,3 +15,10 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.25.0'
     testImplementation 'org.hsqldb:hsqldb:2.7.2'
 }
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
