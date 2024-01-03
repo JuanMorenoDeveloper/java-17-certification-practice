@@ -1,6 +1,5 @@
 package ve.com.proitcsolution;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Ch15JDBC {
+class Ch15JdbcTest {
 
   public static final String JDBC_HSQLDB_URL = "jdbc:hsqldb:mem:invoice";
 

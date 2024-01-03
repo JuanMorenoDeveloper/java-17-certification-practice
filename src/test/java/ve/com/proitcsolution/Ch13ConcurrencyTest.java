@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 
-class Ch13Concurrency {
+class Ch13ConcurrencyTest {
     @Test
     void whenCompareAndSet_thenGetExpectedResult(){
         var atomicInteger = new AtomicInteger(0);
