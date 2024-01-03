@@ -76,7 +76,7 @@ class Ch15JdbcTest {
 
   @Order(2)
   @Test
-  void verifyExecuteUpdateThrowsException() {
+  void verifyExecuteUpdateThrowsExceptionWithInvalidStatement() {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
         var countStatement = connection.prepareStatement("SELECT count(*) FROM Customer")) {
 
@@ -85,6 +85,22 @@ class Ch15JdbcTest {
       assertThat(thrown)
           .isInstanceOf(SQLException.class)
           .hasMessage("statement does not generate a row count");
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Order(3)
+  @Test
+  void verifyExecuteQueryThrowsExceptionWithInvalidStatement() {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
+        var deleteStatement = connection.prepareStatement("DELETE FROM Customer where id=49")) {
+
+      var thrown = catchThrowable(deleteStatement::executeQuery);
+
+      assertThat(thrown)
+          .isInstanceOf(SQLException.class)
+          .hasMessage("statement does not generate a result set");
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
