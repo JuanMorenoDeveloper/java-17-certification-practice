@@ -1,6 +1,7 @@
 package ve.com.proitcsolution;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 class Ch15JdbcTest {
 
@@ -20,16 +22,20 @@ class Ch15JdbcTest {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
         var statement = connection.createStatement()) {
       var create = Files.readString(Path.of("src/test/resources/ch15jdbc/create_invoicedb.sql"));
-      statement.execute(create);
+      boolean isResultSetCreate = statement.execute(create);
       var data = Files.readString(Path.of("src/test/resources/ch15jdbc/data_invoicedb.sql"));
-      statement.execute(data);
+      boolean isResultSetData = statement.execute(data);
+
+      assertThat(isResultSetCreate).isFalse();
+      assertThat(isResultSetData).isFalse();
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
 
+  @Order(0)
   @Test
-  void verifyCount() {
+  void verifyProductCount() {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
         var statement = connection.prepareStatement("SELECT count(*) FROM Product");
         var result = statement.executeQuery()) {
@@ -38,6 +44,47 @@ class Ch15JdbcTest {
       int productCount = result.getInt(1);
 
       assertThat(productCount).isEqualTo(50);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Order(1)
+  @Test
+  void verifyDeleteCustomer() {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
+        var countStatement = connection.prepareStatement("SELECT count(*) FROM Customer");
+        var initialResult = countStatement.executeQuery()) {
+
+      initialResult.next();
+      int initialCustomerCount = initialResult.getInt(1);
+
+      var deleteStatement = connection.prepareStatement("DELETE FROM Customer WHERE id=49");
+      int rowUpdated = deleteStatement.executeUpdate();
+
+      var finalResult = countStatement.executeQuery();
+      finalResult.next();
+      int finalCustomerCount = finalResult.getInt(1);
+
+      assertThat(rowUpdated).isEqualTo(1);
+      assertThat(initialCustomerCount).isEqualTo(50);
+      assertThat(finalCustomerCount).isEqualTo(49);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Order(2)
+  @Test
+  void verifyExecuteUpdateThrowsException() {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
+        var countStatement = connection.prepareStatement("SELECT count(*) FROM Customer")) {
+
+      var thrown = catchThrowable(countStatement::executeUpdate);
+
+      assertThat(thrown)
+          .isInstanceOf(SQLException.class)
+          .hasMessage("statement does not generate a row count");
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
