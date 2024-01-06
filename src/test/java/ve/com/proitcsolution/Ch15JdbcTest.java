@@ -1,7 +1,6 @@
 package ve.com.proitcsolution;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -9,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -25,6 +25,9 @@ class Ch15JdbcTest {
       boolean isResultSetCreate = statement.execute(create);
       var data = Files.readString(Path.of("src/test/resources/ch15jdbc/data_invoicedb.sql"));
       boolean isResultSetData = statement.execute(data);
+      var storeProcedures =
+          Files.readString(Path.of("src/test/resources/ch15jdbc/store_procedure_invoicedb.sql"));
+      statement.execute(storeProcedures);
 
       assertThat(isResultSetCreate).isFalse();
       assertThat(isResultSetData).isFalse();
@@ -33,7 +36,6 @@ class Ch15JdbcTest {
     }
   }
 
-  @Order(0)
   @Test
   void verifyProductCount() {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
@@ -49,7 +51,6 @@ class Ch15JdbcTest {
     }
   }
 
-  @Order(1)
   @Test
   void verifyDeleteCustomer() {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
@@ -74,7 +75,6 @@ class Ch15JdbcTest {
     }
   }
 
-  @Order(2)
   @Test
   void verifyExecuteUpdateThrowsExceptionWithInvalidStatement() {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
@@ -90,7 +90,6 @@ class Ch15JdbcTest {
     }
   }
 
-  @Order(3)
   @Test
   void verifyExecuteQueryThrowsExceptionWithInvalidStatement() {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
@@ -103,6 +102,92 @@ class Ch15JdbcTest {
           .hasMessage("statement does not generate a result set");
     } catch (SQLException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  @Test
+  void verifyProductWithIdZero() {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
+        var statement = connection.prepareStatement("SELECT * FROM Product where Id = ?")) {
+      statement.setInt(1, 0);
+      var result = statement.executeQuery();
+      result.next();
+      var productName = result.getString("Name");
+
+      assertThat(productName).isEqualTo("Iron Iron");
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Test
+  void verifyProductWithoutBindParameterThrowsException() {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
+        var statement = connection.prepareStatement("SELECT * FROM Product where Id = ?")) {
+
+      var thrown = catchThrowable(statement::executeQuery);
+
+      assertThat(thrown).isInstanceOf(SQLException.class).hasMessageContaining("Parameter not set");
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Test
+  void verifyProductWithInvalidBindParameterThrowsException() {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
+        var statement = connection.prepareStatement("SELECT * FROM Product where Id = ?")) {
+      statement.setInt(1, 0);
+      statement.setInt(2, 0);
+
+      var thrown = catchThrowable(statement::executeQuery);
+
+      assertThat(thrown)
+          .isInstanceOf(SQLException.class)
+          .hasMessageContaining("parameter index out of range");
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Test
+  void verifyStoreProcedures() throws SQLException {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL)) {
+      // store procedure without parameters
+      try (var callableStatement = connection.prepareCall("{call read_t_names()}");
+          var namesStartingWithTResulSet = callableStatement.executeQuery()) {
+
+        while (namesStartingWithTResulSet.next()) {
+          assertThat(namesStartingWithTResulSet.getString("Name")).startsWith("T");
+        }
+      }
+
+      // store procedure with input parameter
+      try (var callableStatement = connection.prepareCall("{call read_names_by_letter(?)}")) {
+        callableStatement.setString("prefix", "C");
+        var namesStartingWithCResulSet = callableStatement.executeQuery();
+
+        while (namesStartingWithCResulSet.next()) {
+          assertThat(namesStartingWithCResulSet.getString("Name")).startsWith("C");
+        }
+      }
+
+      // store procedure with an out parameter
+      try (var callableStatement = connection.prepareCall("{? = call magic_number(?)}")) {
+        callableStatement.registerOutParameter(1, Types.INTEGER);
+        callableStatement.execute();
+
+        assertThat(callableStatement.getInt(1)).isEqualTo(42);
+      }
+
+      // store procedure with an inout parameter
+      try (var callableStatement = connection.prepareCall("{call double_number(?)}")) {
+        callableStatement.setInt(1, 5);
+        callableStatement.registerOutParameter(1, Types.INTEGER);
+        callableStatement.execute();
+
+        assertThat(callableStatement.getInt(1)).isEqualTo(10);
+      }
     }
   }
 }
