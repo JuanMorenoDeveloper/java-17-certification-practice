@@ -127,7 +127,9 @@ class Ch15JdbcTest {
 
       var thrown = catchThrowable(statement::executeQuery);
 
-      assertThat(thrown).isInstanceOf(SQLException.class).hasMessageContaining("Parameter not set");
+      assertThat(thrown)
+              .isInstanceOf(SQLException.class)
+              .hasMessageContaining("Parameter not set");
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -138,9 +140,8 @@ class Ch15JdbcTest {
     try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL);
         var statement = connection.prepareStatement("SELECT * FROM Product where Id = ?")) {
       statement.setInt(1, 0);
-      statement.setInt(2, 0);
 
-      var thrown = catchThrowable(statement::executeQuery);
+      var thrown = catchThrowable(() -> statement.setInt(2, 0));
 
       assertThat(thrown)
           .isInstanceOf(SQLException.class)
