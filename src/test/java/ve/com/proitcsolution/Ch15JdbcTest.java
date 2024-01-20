@@ -127,9 +127,7 @@ class Ch15JdbcTest {
 
       var thrown = catchThrowable(statement::executeQuery);
 
-      assertThat(thrown)
-              .isInstanceOf(SQLException.class)
-              .hasMessageContaining("Parameter not set");
+      assertThat(thrown).isInstanceOf(SQLException.class).hasMessageContaining("Parameter not set");
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -189,6 +187,44 @@ class Ch15JdbcTest {
 
         assertThat(callableStatement.getInt(1)).isEqualTo(10);
       }
+    }
+  }
+
+  @Test
+  void verifySavePoints() throws SQLException {
+    try (var connection = DriverManager.getConnection(JDBC_HSQLDB_URL)) {
+      // Verify auto commit false behavior
+      connection.setAutoCommit(false);
+      var deleteStatement = connection.prepareStatement("DELETE FROM Customer WHERE id=47");
+      deleteStatement.executeUpdate();
+      connection.commit();
+      var selectStatement = connection.prepareStatement("SELECT * FROM Customer WHERE id=47");
+      var result = selectStatement.executeQuery();
+
+      boolean isNotFound = result.next();
+
+      assertThat(isNotFound).isFalse();
+      // Verify auto commit false behavior with rollback
+      var deleteStatement1 = connection.prepareStatement("DELETE FROM Customer WHERE id=48");
+      deleteStatement1.executeUpdate();
+      connection.rollback();
+      var selectStatement1 = connection.prepareStatement("SELECT * FROM Customer WHERE id=48");
+      var result1 = selectStatement1.executeQuery();
+
+      boolean isFound = result1.next();
+
+      assertThat(isFound).isTrue();
+      // Verify savePoints
+      var savePoint = connection.setSavepoint("before_delete_save_point");
+      var deleteStatement2 = connection.prepareStatement("DELETE FROM Customer WHERE id=49");
+      deleteStatement2.executeUpdate();
+      connection.rollback(savePoint);
+      var selectStatement2 = connection.prepareStatement("SELECT * FROM Customer WHERE id=49");
+      var result2 = selectStatement2.executeQuery();
+
+      boolean isFound2 = result2.next();
+
+      assertThat(isFound2).isTrue();
     }
   }
 }
